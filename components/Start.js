@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export default class Start extends React.Component {
     state = {
         name: '',
-        bgColor: '#ffffff',
+        bgColor: '#fff',
     };
 
     /*
@@ -29,7 +29,7 @@ export default class Start extends React.Component {
         pink: '#f9d5e5',
         purple: '#baa6d0',
         green: '#c4df9b',
-        blue: '#7accc8',
+        turquoise: '#7accc8',
     };
 
     render() {
@@ -95,15 +95,15 @@ export default class Start extends React.Component {
                                     <View style={styles.green}></View>
                                 </TouchableOpacity>
 
-                                {/* BLUE background */}
+                                {/* turquoise background */}
                                 <TouchableOpacity
                                     accessible={true}
-                                    accessibilityLabel="Select blue background"
-                                    accessibilityHint="Choose blue background for the chat screen"
+                                    accessibilityLabel="Select turquoise background"
+                                    accessibilityHint="Choose turquoise background for the chat screen"
                                     accessibilityRole="button"
-                                    onPress={() => this.changeBgColor(this.colors.blue)}
+                                    onPress={() => this.changeBgColor(this.colors.turquoise)}
                                 >
-                                    <View style={styles.blue}></View>
+                                    <View style={styles.turquoise}></View>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -157,9 +157,9 @@ const styles = StyleSheet.create({
         color: '#ffffff',
     },
     box: {
-        width: '88%',
-        height: '44%',
-        marginBottom: 30,
+        width: '90%',
+        height: '45%',
+        marginBottom: 60,
         backgroundColor: '#ffffff',
         flexGrow: 1,
         flexShrink: 0,
@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
     colorSelector: {
         flex: 1,
         width: '70%',
+        marginTop: 5
     },
     colorsTitle: {
         textAlign: 'center',
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
         fontWeight: '300',
         color: '#736357',
         opacity: 1,
-        marginBottom: 10,
+        marginBottom: 15,
     },
     colorsList: {
         flex: 1,
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: '#c4df9b',
     },
-    blue: {
+    turquoise: {
         width: 40,
         height: 40,
         borderRadius: 20,
