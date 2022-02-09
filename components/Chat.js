@@ -5,10 +5,13 @@ import {
     Platform,
     KeyboardAvoidingView,
 } from 'react-native';
-import { Bubble, GiftedChat, SystemMessage } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat, SystemMessage, InputToolbar } from 'react-native-gifted-chat';
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import 'firebase/compat/auth'
+import 'firebase/compat/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+
 
 //Firebase configuration
 const firebaseConfig = {
@@ -44,39 +47,69 @@ export default class Chat extends React.Component {
         this.referenceChatMessages = firebase.firestore().collection("messages");
     }
 
+
+
     componentDidMount() {
         // Set the page title once Chat is loaded
         let { name } = this.props.route.params
         // Adds the name to top of screen
         this.props.navigation.setOptions({ title: name })
 
-        // user can sign in anonymously
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-            if (!user) {
-                await firebase.auth().signInAnonymously();
+        //To find out user's connection status
+        NetInfo.fetch().then(connection => {
+            //actions when user is online
+            if (connection.isConnected) {
+                this.setState({ isConnected: true });
+                console.log('online');
+
+                // user can sign in anonymously
+                this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+                    if (!user) {
+                        await firebase.auth().signInAnonymously();
+                    }
+
+                    // listens for updates in the collection
+                    this.unSubscribe = this.referenceChatMessages
+                        .orderBy("createdAt", "desc")
+                        .onSnapshot(this.onCollectionUpdate);
+
+
+                    //update user state with currently active user data
+                    this.setState({
+                        uid: user.uid,
+                        messages: [],
+                        user: {
+                            _id: user.uid,
+                            name: name,
+                            avatar: "https://placeimg.com/140/140/any",
+                        },
+                    });
+
+                });
+                //save messages when online
+                this.saveMessages();
+            } else {
+                this.setState({ isConnected: false });
+                console.log('offline');
+
+                //retrieve chat from asyncstorage
+                this.getMessages();
             }
-
-            //update user state with currently active user data
-            this.setState({
-                uid: user.uid,
-                messages: [],
-                user: {
-                    _id: user.uid,
-                    name: name,
-                    avatar: "https://placeimg.com/140/140/any",
-                },
-            });
-
-            // listens for updates in the collection
-            this.unSubscribe = this.referenceChatMessages
-                .orderBy("createdAt", "desc")
-                .onSnapshot(this.onCollectionUpdate);
         });
     }
 
     componentWillUnmount() {
         this.authUnsubscribe();
         this.unSubscribe();
+    }
+
+    onSend(messages = []) {
+        this.setState(previousState => ({
+            messages: GiftedChat.append(previousState.messages, messages),
+        }), () => {
+            this.addMessages();
+            this.saveMessages();
+        })
     }
 
     onCollectionUpdate = (querySnapshot) => {
@@ -117,13 +150,39 @@ export default class Chat extends React.Component {
         });
     }
 
-    onSend(messages = []) {
-        this.setState(previousState => ({
-            messages: GiftedChat.append(previousState.messages, messages),
-        }), () => {
-            this.addMessages();
-        })
+    async getMessages() {
+        let messages = '';
+        try {
+            messages = await AsyncStorage.getItem("messages") || [];
+            this.setState({
+                messages: JSON.parse(messages)
+                ,
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
+    async saveMessages() {
+        try {
+            await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+        } catch (error) {
+            console.log(error.message);
+        }
     }
+
+    async deleteMessages() {
+        try {
+            await AsyncStorage.removeItem('messages');
+            this.setState({
+                messages: []
+            })
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+
 
     renderBubble(props) {
         return (
@@ -137,6 +196,18 @@ export default class Chat extends React.Component {
             />
         )
     };
+
+    //render InputToolbar only when online
+    renderInputToolbar(props) {
+        if (this.state.isConnected == false) {
+        } else {
+            return (
+                <InputToolbar
+                    {...props}
+                />
+            );
+        }
+    }
 
     renderSystemMessage(props) {
         return <SystemMessage {...props} textStyle={{ color: '#000' }} />;
@@ -157,6 +228,7 @@ export default class Chat extends React.Component {
                     <GiftedChat
                         renderSystemMessage={this.renderSystemMessage}
                         renderBubble={this.renderBubble.bind(this)}
+                        renderInputToolbar={this.renderInputToolbar.bind(this)}
                         messages={this.state.messages}
                         onSend={messages => this.onSend(messages)}
                         user={{

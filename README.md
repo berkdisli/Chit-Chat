@@ -1,4 +1,4 @@
-<h2>I)Topic: </h2> **Chit-Chat**
+## Chit-Chat
 
 Chit-Chat is a mobile application for fast communication between end users.
 
