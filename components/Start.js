@@ -6,16 +6,20 @@ import {
     ImageBackground,
     Pressable,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    LogBox
 } from 'react-native';
 import backgroundImg from '../assets/bg.png';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+LogBox.ignoreLogs(['Setting a timer']);
 
 export default class Start extends React.Component {
     state = {
         name: '',
         bgColor: '#fff',
     };
+
 
     /*
    Updates the state with the background color choice of a user

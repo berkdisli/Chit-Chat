@@ -4,14 +4,18 @@ import {
     StyleSheet,
     Platform,
     KeyboardAvoidingView,
+    LogBox
 } from 'react-native';
-import { Bubble, GiftedChat, SystemMessage, InputToolbar } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import 'firebase/compat/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
+import "firebase/compat/storage";
 
+LogBox.ignoreAllLogs();
 
 //Firebase configuration
 const firebaseConfig = {
@@ -182,8 +186,6 @@ export default class Chat extends React.Component {
         }
     }
 
-
-
     renderBubble(props) {
         return (
             <Bubble
@@ -209,11 +211,37 @@ export default class Chat extends React.Component {
         }
     }
 
-    renderSystemMessage(props) {
-        return <SystemMessage {...props} textStyle={{ color: '#000' }} />;
+    //to access CustomActions
+    renderCustomActions = (props) => {
+        return <CustomActions {...props} />;
+    };
+
+    //return a MapView when surrentMessage contains location data
+    renderCustomView(props) {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                />
+            );
+        }
+        return null;
     }
 
     render() {
+        // Set the background color selected from start screen
         let bgColor = this.props.route.params.bgColor;
 
         return (
@@ -226,9 +254,10 @@ export default class Chat extends React.Component {
                     }}
                 >
                     <GiftedChat
-                        renderSystemMessage={this.renderSystemMessage}
                         renderBubble={this.renderBubble.bind(this)}
                         renderInputToolbar={this.renderInputToolbar.bind(this)}
+                        renderActions={this.renderCustomActions}
+                        renderCustomView={this.renderCustomView}
                         messages={this.state.messages}
                         onSend={messages => this.onSend(messages)}
                         user={{

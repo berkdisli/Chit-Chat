@@ -1,6 +1,5 @@
 ## Chit-Chat
-
-Chit-Chat is a mobile application for fast communication between end users.
+Chit-Chat is a chat app for mobile devices which is developed using React Native. The app provides users with features such as a chat interface and the ability to share images and their location.
 
 ## Features
 * 4 different background color options
@@ -33,5 +32,9 @@ Download the Expo app on the device you want to use to run the app. \
 With your device, scan QR code (Android) or send a link via email (iOS) to connect to expo. \
 The app will start on your device and you'll be able to use it.
 
+## Screenshots
+![alt text](https://github.com/berkdisli/Chit-Chat/blob/assets/image.jpg)
+![alt text](https://github.com/berkdisli/Chit-Chat/blob/assets/image.jpg)
+![alt text](https://github.com/berkdisli/Chit-Chat/blob/assets/image.jpg)
 
  
