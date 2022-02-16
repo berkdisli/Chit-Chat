@@ -33,8 +33,8 @@ With your device, scan QR code (Android) or send a link via email (iOS) to conne
 The app will start on your device and you'll be able to use it.
 
 ## Screenshots
-![alt text](https://github.com/berkdisli/Chit-Chat/blob/assets/image.jpg)
-![alt text](https://github.com/berkdisli/Chit-Chat/blob/assets/image.jpg)
-![alt text](https://github.com/berkdisli/Chit-Chat/blob/assets/image.jpg)
+![chit-chat screenshot](https://github.com/berkdisli/Chit-Chat/blob/assets/chit-chat.png)
+![chit-chat screenshot](https://github.com/berkdisli/Chit-Chat/blob/assets/chit-chat2.png)
+![chit-chat screenshot](https://github.com/berkdisli/Chit-Chat/blob/assets/chit-chat3.png)
 
  
